@@ -1,0 +1,763 @@
+/* ============================================================
+   INTRANET — Design System v2.1
+   Dark mode profesional · Glassmorphism · Inter font
+   ============================================================ */
+
+/* ── 1. Design Tokens ───────────────────────────────────────── */
+:root {
+  /* Colores base */
+  --bg-app:          #0f172a;
+  --bg-surface:      #1e293b;
+  --bg-card:         rgba(30, 41, 59, 0.85);
+  --bg-card-hover:   rgba(51, 65, 85, 0.95);
+  --bg-input:        rgba(15, 23, 42, 0.6);
+  --bg-overlay:      rgba(15, 23, 42, 0.95);
+
+  /* Colores de acción */
+  --color-primary:        #6366f1;
+  --color-primary-light:  #818cf8;
+  --color-primary-dim:    rgba(99, 102, 241, 0.15);
+  --color-accent:         #38bdf8;
+  --color-success:        #22c55e;
+  --color-error:          #ef4444;
+  --color-warning:        #f59e0b;
+
+  /* Bordes */
+  --border:       rgba(99, 102, 241, 0.12);
+  --border-soft:  rgba(148, 163, 184, 0.08);
+  --border-hover: rgba(99, 102, 241, 0.40);
+  --border-focus: rgba(99, 102, 241, 0.60);
+
+  /* Texto */
+  --text-primary:   #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+  --text-inverse:   #0f172a;
+
+  /* Sombras */
+  --shadow-sm:   0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md:   0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg:   0 8px 40px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 24px rgba(99, 102, 241, 0.18);
+
+  /* Radios */
+  --radius-sm: 6px;
+  --radius:    12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Transiciones */
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Tipografía */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ── 2. Reset & Base ────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  background: var(--bg-app) !important;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font) !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: var(--text-primary) !important;
+  background: var(--bg-app) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-dim);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+
+/* Selección de texto */
+::selection {
+  background: var(--color-primary-dim);
+  color: var(--color-primary-light);
+}
+
+/* ── 3. App & Layout ────────────────────────────────────────── */
+.application,
+.intranet-app,
+.v-application {
+  background: var(--bg-app) !important;
+  font-family: var(--font) !important;
+  color: var(--text-primary) !important;
+}
+
+.main-container {
+  max-width: 1400px;
+  padding: 32px 28px !important;
+  animation: fadeInUp 0.35s ease both;
+}
+
+/* Asegurar que v-content tenga el padding correcto */
+.v-content__wrap {
+  padding: 0 !important;
+}
+
+/* Headings globales */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font) !important;
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: 1.75rem; margin-bottom: 12px; }
+h2 { font-size: 1.4rem; margin-bottom: 10px; }
+h3 { font-size: 1.15rem; margin-bottom: 8px; }
+h4 { font-size: 1rem; margin-bottom: 6px; }
+h5 { font-size: 0.9rem; }
+
+hr {
+  border-color: var(--border-soft) !important;
+  margin: 20px 0;
+}
+
+/* Page sections — espacio entre secciones de contenido */
+.v-card__text + .v-card__text { padding-top: 0; }
+.v-card > .v-card__text:first-child { padding-top: 20px; }
+.v-card > .v-card__text:last-child  { padding-bottom: 20px; }
+
+/* b-card body */
+.card-body { padding: 20px 24px !important; }
+
+/* b-form-group spacing */
+.form-group { margin-bottom: 18px; }
+
+/* Espacio entre filas de formulario */
+.b-form .row, .b-card .row { margin-bottom: 4px; }
+
+/* Contenedor de tabs */
+.nav-tabs + .tab-content { padding-top: 20px; }
+.tab-pane { padding: 8px 0; }
+
+/* ── 4. Vuetify Toolbar (Top Navbar) ────────────────────────── */
+.v-toolbar {
+  background: rgba(15, 23, 42, 0.92) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: 0 1px 0 rgba(99, 102, 241, 0.08), var(--shadow-sm) !important;
+}
+
+.v-toolbar__title {
+  font-family: var(--font) !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: var(--text-primary) !important;
+  text-transform: uppercase;
+}
+
+.v-toolbar__side-icon .v-btn__content i,
+.v-toolbar .v-btn__content i {
+  color: var(--text-secondary) !important;
+  transition: color var(--transition) !important;
+}
+.v-toolbar__side-icon:hover .v-btn__content i,
+.v-toolbar .v-btn:hover .v-btn__content i {
+  color: var(--color-primary-light) !important;
+}
+
+/* Botón cerrar sesión */
+.v-toolbar .v-btn {
+  background: var(--color-primary-dim) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font) !important;
+  font-weight: 500 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+  transition: all var(--transition) !important;
+}
+.v-toolbar .v-btn:hover {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.3) !important;
+}
+
+/* ── 5. Navigation Drawer (Sidebar) ────────────────────────── */
+.navigation-drawer,
+.v-navigation-drawer {
+  background: var(--bg-surface) !important;
+  border-right: 1px solid var(--border) !important;
+  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Avatar y nombre en sidebar */
+.v-navigation-drawer .v-avatar {
+  border: 2px solid var(--color-primary) !important;
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.4) !important;
+  transition: box-shadow var(--transition) !important;
+}
+.v-navigation-drawer .v-avatar:hover {
+  box-shadow: 0 0 24px rgba(99, 102, 241, 0.7) !important;
+}
+.v-navigation-drawer p {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+
+/* Lista del menú lateral */
+.v-navigation-drawer .v-list {
+  background: transparent !important;
+  padding: 8px !important;
+}
+
+.v-navigation-drawer .v-list__tile {
+  border-radius: var(--radius-sm) !important;
+  margin-bottom: 2px !important;
+  transition: all var(--transition) !important;
+  color: var(--text-secondary) !important;
+}
+.v-navigation-drawer .v-list__tile:hover {
+  background: var(--color-primary-dim) !important;
+  color: var(--text-primary) !important;
+}
+.v-navigation-drawer .v-list__tile--active,
+.v-navigation-drawer .v-list__tile--highlighted {
+  background: var(--color-primary-dim) !important;
+  color: var(--color-primary-light) !important;
+  border-left: 3px solid var(--color-primary) !important;
+}
+
+.v-navigation-drawer .v-list__tile__action .v-icon,
+.v-navigation-drawer .v-list__tile__title {
+  color: inherit !important;
+  font-family: var(--font) !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+}
+
+/* Divider en sidebar */
+.v-navigation-drawer .v-divider {
+  border-color: var(--border-soft) !important;
+  margin: 8px 16px !important;
+}
+
+/* Footer del sidebar */
+.v-navigation-drawer .fixed-bottom {
+  color: var(--text-muted) !important;
+  font-size: 0.72rem !important;
+  padding: 12px 8px !important;
+  border-top: 1px solid var(--border-soft);
+}
+.v-navigation-drawer .fixed-bottom a {
+  color: var(--color-primary-light) !important;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.v-navigation-drawer .fixed-bottom a:hover {
+  color: var(--color-accent) !important;
+}
+.v-navigation-drawer .fixed-bottom strong {
+  color: var(--text-secondary) !important;
+}
+
+/* ── 6. Cards (Glassmorphism) ──────────────────────────────── */
+.v-card,
+.card,
+.b-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  box-shadow: var(--shadow-md) !important;
+  color: var(--text-primary) !important;
+  transition: transform var(--transition), box-shadow var(--transition),
+    border-color var(--transition) !important;
+  overflow: hidden;
+}
+
+.v-card:hover,
+.card:hover {
+  border-color: var(--border-hover) !important;
+  box-shadow: var(--shadow-md), var(--shadow-glow) !important;
+  transform: translateY(-2px) !important;
+}
+
+.v-card__text,
+.card-body,
+.b-card-text {
+  color: var(--text-primary) !important;
+  font-family: var(--font) !important;
+  line-height: 1.7;
+}
+
+/* Padding interno consistente en cards de Vuetify */
+.v-card .v-card__text {
+  padding: 16px 20px !important;
+}
+.v-card .v-card__text:first-child { padding-top: 20px !important; }
+.v-card .v-card__text:last-child  { padding-bottom: 20px !important; }
+
+/* ── 7. Tabs (Bootstrap-Vue & Vuetify) ─────────────────────── */
+.nav-tabs {
+  border-bottom: 1px solid var(--border) !important;
+  background: transparent !important;
+}
+.nav-tabs .nav-link {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0 !important;
+  color: var(--text-secondary) !important;
+  font-family: var(--font) !important;
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+  padding: 10px 18px !important;
+  transition: all var(--transition) !important;
+}
+.nav-tabs .nav-link:hover {
+  color: var(--text-primary) !important;
+  background: var(--color-primary-dim) !important;
+}
+.nav-tabs .nav-link.active {
+  background: var(--color-primary-dim) !important;
+  border-color: var(--border-hover) var(--border-hover) transparent !important;
+  color: var(--color-primary-light) !important;
+}
+
+/* Bootstrap tabs card wrapper */
+.card.b-card-outer,
+.tabs .card {
+  background: transparent !important;
+  border: none !important;
+  backdrop-filter: none !important;
+}
+
+/* ── 8. Buttons ────────────────────────────────────────────── */
+.v-btn,
+.btn {
+  font-family: var(--font) !important;
+  font-weight: 500 !important;
+  font-size: 0.82rem !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+  border-radius: var(--radius-sm) !important;
+  transition: all var(--transition) !important;
+}
+
+/* Primary button */
+.v-btn--flat.primary,
+.btn-primary {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 rgba(99, 102, 241, 0) !important;
+}
+.v-btn--flat.primary:hover,
+.btn-primary:hover {
+  background: var(--color-primary-light) !important;
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* Outline buttons */
+.btn-outline-success { border-color: var(--color-success) !important; color: var(--color-success) !important; background: transparent !important; }
+.btn-outline-success:hover { background: rgba(34, 197, 94, 0.12) !important; }
+.btn-outline-danger  { border-color: var(--color-error) !important; color: var(--color-error) !important; background: transparent !important; }
+.btn-outline-danger:hover  { background: rgba(239, 68, 68, 0.12) !important; }
+.btn-success { background: var(--color-success) !important; border-color: var(--color-success) !important; color: #fff !important; }
+.btn-success:hover { background: #16a34a !important; box-shadow: 0 0 12px rgba(34, 197, 94, 0.35) !important; }
+.btn-danger  { background: var(--color-error) !important; border-color: var(--color-error) !important; color: #fff !important; }
+.btn-danger:hover  { background: #dc2626 !important; box-shadow: 0 0 12px rgba(239, 68, 68, 0.35) !important; }
+.btn-warning { background: var(--color-warning) !important; border-color: var(--color-warning) !important; color: #0f172a !important; }
+.btn-info    { background: var(--color-accent) !important; border-color: var(--color-accent) !important; color: #0f172a !important; }
+.btn-secondary { background: rgba(100, 116, 139, 0.2) !important; border-color: var(--border) !important; color: var(--text-secondary) !important; }
+
+/* Vuetify colored buttons */
+.v-btn.success { background: var(--color-success) !important; color: #fff !important; }
+.v-btn.danger,
+.v-btn.error   { background: var(--color-error) !important; color: #fff !important; }
+.v-btn.warning { background: var(--color-warning) !important; }
+.v-btn.info    { background: var(--color-accent) !important; }
+
+/* Icon buttons */
+.btn-sm {
+  padding: 4px 10px !important;
+  font-size: 0.78rem !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* ── 9. Form Controls ──────────────────────────────────────── */
+.v-input input,
+.v-input textarea,
+.form-control,
+.v-text-field input {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+  font-family: var(--font) !important;
+  font-size: 0.875rem !important;
+  transition: border-color var(--transition) !important;
+}
+.v-input input:focus,
+.form-control:focus {
+  border-color: var(--border-focus) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+  outline: none !important;
+  background: rgba(15, 23, 42, 0.8) !important;
+}
+
+/* Vuetify text field overrides */
+.v-text-field .v-input__slot {
+  background: var(--bg-input) !important;
+  border-radius: var(--radius-sm) !important;
+}
+.v-text-field label,
+.v-label {
+  color: var(--text-muted) !important;
+  font-family: var(--font) !important;
+  font-size: 0.85rem !important;
+}
+.v-text-field .v-input__slot::before,
+.v-text-field .v-input__slot::after {
+  border-color: var(--border-focus) !important;
+}
+.v-text-field--outline .v-input__slot {
+  border: 1px solid var(--border) !important;
+}
+.v-text-field .v-input__icon .v-icon {
+  color: var(--text-muted) !important;
+}
+.v-input__slot {
+  background: transparent !important;
+}
+
+/* Input group (Bootstrap) */
+.input-group-prepend .input-group-text {
+  background: rgba(30, 41, 59, 0.9) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-secondary) !important;
+  font-family: var(--font) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+}
+.input-group > .form-control {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border) !important;
+  border-left: none !important;
+  color: var(--text-primary) !important;
+}
+.input-group > .form-control:focus {
+  border-color: var(--border-focus) !important;
+  box-shadow: none !important;
+}
+
+/* Radio buttons */
+.btn-group-toggle .btn {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-secondary) !important;
+}
+.btn-group-toggle .btn.active,
+.btn-group-toggle .btn:hover {
+  background: var(--color-primary-dim) !important;
+  border-color: var(--border-hover) !important;
+  color: var(--color-primary-light) !important;
+}
+.btn-outline-dark {
+  border-color: var(--border) !important;
+  color: var(--text-secondary) !important;
+}
+.btn-outline-dark:hover,
+.btn-outline-dark.active {
+  background: var(--color-primary-dim) !important;
+  border-color: var(--border-hover) !important;
+  color: var(--color-primary-light) !important;
+}
+
+/* ── 10. Chips & Badges ───────────────────────────────────── */
+.v-chip {
+  background: rgba(30, 41, 59, 0.9) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font) !important;
+  font-size: 0.82rem !important;
+  border-radius: 20px !important;
+}
+.badge-pill, .badge {
+  font-family: var(--font) !important;
+  font-weight: 600 !important;
+}
+
+/* ── 11. Avatar ───────────────────────────────────────────── */
+.v-avatar {
+  border: 2px solid var(--border) !important;
+  transition: border-color var(--transition) !important;
+}
+.v-avatar:hover {
+  border-color: var(--color-primary) !important;
+}
+
+/* ── 12. Drag & Drop (ListadoTareas) ─────────────────────── */
+.list-group {
+  gap: 6px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px !important;
+}
+
+.list-group-item {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  color: var(--text-primary) !important;
+  padding: 14px 18px !important;
+  font-family: var(--font) !important;
+  transition: all var(--transition) !important;
+  backdrop-filter: blur(12px) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.list-group-item:hover {
+  border-color: var(--border-hover) !important;
+  background: var(--bg-card-hover) !important;
+  transform: translateX(2px);
+}
+
+.fonts {
+  font-family: var(--font) !important;
+  font-size: 0.95rem !important;
+  font-weight: 500;
+  color: var(--text-primary) !important;
+}
+
+/* Tarea completada */
+.tachado {
+  color: var(--text-muted) !important;
+  text-decoration: line-through;
+}
+
+/* ── 13. Drive / Drop Zone ────────────────────────────────── */
+.drop-zone {
+  border: 2px dashed var(--border-hover) !important;
+  border-radius: var(--radius) !important;
+  background: var(--color-primary-dim) !important;
+  opacity: 0.8;
+  color: var(--text-secondary) !important;
+  text-align: center;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all var(--transition) !important;
+}
+.drop-zone:hover {
+  border-color: var(--color-primary) !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  opacity: 1;
+}
+.file-over {
+  border-color: var(--color-accent) !important;
+  background: rgba(56, 189, 248, 0.08) !important;
+}
+.file-selector {
+  padding: 48px 20px !important;
+  font-family: var(--font) !important;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-secondary) !important;
+  background: transparent !important;
+}
+
+/* ── 14. Tables ──────────────────────────────────────────── */
+.table {
+  margin-top: 20px !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font) !important;
+}
+.table th {
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  border-color: var(--border) !important;
+  background: rgba(30, 41, 59, 0.5) !important;
+}
+.table td {
+  border-color: var(--border-soft) !important;
+  color: var(--text-primary) !important;
+  font-size: 0.85rem !important;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+  background: rgba(30, 41, 59, 0.3) !important;
+}
+
+/* Progress bars */
+.upload-progress, .uploaded-date { font-size: 0.75rem; color: var(--text-muted); }
+.progress {
+  background: rgba(30, 41, 59, 0.6) !important;
+  border-radius: 4px !important;
+  height: 6px !important;
+}
+.progress-bar {
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent)) !important;
+  border-radius: 4px !important;
+}
+
+/* ── 15. Ingreso (Login page) ────────────────────────────── */
+.v-card.ingreso-card {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.v-card__text.display-1 {
+  font-family: var(--font) !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  padding: 20px 24px !important;
+  border-radius: var(--radius) var(--radius) 0 0 !important;
+}
+.v-card__text.display-1.accent {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #8b5cf6 100%) !important;
+}
+.v-card__text.display-1.success {
+  background: linear-gradient(135deg, var(--color-success) 0%, #16a34a 100%) !important;
+}
+
+/* Google Sign-In button container */
+.v-card__text .justify-center {
+  min-height: 56px;
+}
+
+/* ── 16. Dashboard ───────────────────────────────────────── */
+.apexcharts-canvas {
+  filter: brightness(0.95);
+}
+.apexcharts-text, .apexcharts-legend-text {
+  font-family: var(--font) !important;
+  fill: var(--text-secondary) !important;
+  color: var(--text-secondary) !important;
+}
+.apexcharts-gridlines-horizontal line,
+.apexcharts-gridlines-vertical line {
+  stroke: var(--border-soft) !important;
+}
+.apexcharts-tooltip {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-md) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font) !important;
+}
+
+/* ── 17. Modals (SweetAlert2) ────────────────────────────── */
+.swal2-popup {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg), var(--shadow-glow) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font) !important;
+}
+.swal2-title { color: var(--text-primary) !important; font-weight: 700 !important; }
+.swal2-content, .swal2-html-container { color: var(--text-secondary) !important; }
+.swal2-confirm {
+  background: var(--color-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  font-family: var(--font) !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+}
+.swal2-cancel {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border: 1px solid var(--color-error) !important;
+  color: var(--color-error) !important;
+  border-radius: var(--radius-sm) !important;
+  font-family: var(--font) !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+}
+.swal2-icon.swal2-warning { border-color: var(--color-warning) !important; color: var(--color-warning) !important; }
+.swal2-icon.swal2-success { border-color: var(--color-success) !important; }
+.swal2-icon.swal2-success [class^='swal2-success-line'] { background: var(--color-success) !important; }
+.modal-enlace { color: var(--color-accent) !important; }
+
+/* ── 18. Spinner / Loading ───────────────────────────────── */
+.v-progress-circular__underlay { stroke: var(--border) !important; }
+.v-progress-circular__overlay  { stroke: var(--color-primary) !important; }
+
+/* ── 19. Mensajes / Alertas (componente Mensaje.vue) ──────── */
+.alert {
+  border-radius: var(--radius-sm) !important;
+  font-family: var(--font) !important;
+  font-size: 0.85rem !important;
+  border: 1px solid !important;
+}
+.alert-info    { background: rgba(56, 189, 248, 0.1) !important; border-color: rgba(56, 189, 248, 0.3) !important; color: #7dd3fc !important; }
+.alert-success { background: rgba(34, 197, 94, 0.1) !important; border-color: rgba(34, 197, 94, 0.3) !important; color: #86efac !important; }
+.alert-danger  { background: rgba(239, 68, 68, 0.1) !important; border-color: rgba(239, 68, 68, 0.3) !important; color: #fca5a5 !important; }
+.alert-warning { background: rgba(245, 158, 11, 0.1) !important; border-color: rgba(245, 158, 11, 0.3) !important; color: #fcd34d !important; }
+
+/* ── 20. Typography helpers ──────────────────────────────── */
+.text-info { color: var(--color-accent) !important; font-weight: 500; }
+.text-muted { color: var(--text-muted) !important; }
+.text-green { color: var(--color-success) !important; }
+.small, small { color: var(--text-muted) !important; font-size: 0.78rem !important; }
+u { text-decoration-color: var(--color-primary-light); }
+
+/* Texto de validación */
+.text-danger {
+  color: var(--color-error) !important;
+  font-size: 0.78rem !important;
+  margin-top: 4px;
+  font-family: var(--font) !important;
+}
+
+/* ── 21. Bootstrap Row/Col sin padding extra ─────────────── */
+.row.mx-auto { margin-left: 0 !important; margin-right: 0 !important; }
+
+/* ── 22. Animations ──────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(99, 102, 241, 0.2); }
+  50%       { box-shadow: 0 0 24px rgba(99, 102, 241, 0.5); }
+}
+
+/* Aplicar animaciones a elementos al montar */
+.v-card       { animation: fadeInUp 0.3s ease both; }
+.list-group-item { animation: fadeInUp 0.25s ease both; }
+.list-group-item:nth-child(2)  { animation-delay: 0.04s; }
+.list-group-item:nth-child(3)  { animation-delay: 0.08s; }
+.list-group-item:nth-child(4)  { animation-delay: 0.12s; }
+.list-group-item:nth-child(5)  { animation-delay: 0.16s; }
+.list-group-item:nth-child(n+6) { animation-delay: 0.20s; }
+
+/* ── 23. Responsive ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .main-container { padding: 12px 8px !important; }
+  .v-card { border-radius: var(--radius-sm) !important; }
+  h1 { font-size: 1.4rem; }
+}
