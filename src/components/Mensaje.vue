@@ -1,39 +1,31 @@
 <template>
-  <div>
-    <!-- Mensaje informativo -->
-    <b-alert class="text-center" show variant="info" v-if="tipo === 'info'">
-      <v-icon class="fas fa-info text-info fa-3x"></v-icon>
-      <h4>{{ texto }}</h4>
-    </b-alert>
-
-    <!-- Mensaje advertencia -->
-    <b-alert class="text-center" show variant="warning" v-if="tipo === 'warning'">
-      <v-icon class="fas fa-exclamation text-warning fa-3x"></v-icon>
-      <h4>{{ texto }}</h4>
-    </b-alert>
-
-    <!-- Mensaje error -->
-    <b-alert class="text-center" show variant="danger" v-if="tipo === 'error'">
-      <v-icon class="fas fa-times text-danger fa-3x"></v-icon>
-      <h4>{{ texto }}</h4>
-    </b-alert>
-
-    <!-- Mensaje de confirmacion -->
-    <b-alert class="text-center" show variant="success" v-if="tipo === 'success'">
-      <v-icon class="fas fa-check text-success fa-3x"></v-icon>
-      <h4>{{ texto }}</h4>
-    </b-alert>
+  <div class="alert-inline" :class="tone ? 'tone-' + tone : ''" role="status">
+    <i :class="icono" aria-hidden="true"></i>
+    <span>{{ texto }}</span>
   </div>
 </template>
 
 <script>
+const TIPOS = {
+  info: { tone: '', icono: 'fas fa-circle-info' },
+  success: { tone: 'success', icono: 'fas fa-circle-check' },
+  warning: { tone: 'warning', icono: 'fas fa-triangle-exclamation' },
+  error: { tone: 'danger', icono: 'fas fa-circle-exclamation' },
+  danger: { tone: 'danger', icono: 'fas fa-circle-exclamation' },
+}
+
 export default {
+  name: 'Mensaje',
   props: {
-    texto: {
-      type: String,
+    texto: { type: String, required: true },
+    tipo: { type: String, default: 'info' },
+  },
+  computed: {
+    tone() {
+      return (TIPOS[this.tipo] || TIPOS.info).tone
     },
-    tipo: {
-      type: String,
+    icono() {
+      return (TIPOS[this.tipo] || TIPOS.info).icono
     },
   },
 }

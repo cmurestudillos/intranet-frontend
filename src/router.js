@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+// Importación circular (store → router): solo se usa dentro del guard, en tiempo de ejecución
+import store from './store'
 
 Vue.use(Router)
 
@@ -11,49 +13,63 @@ const router = new Router({
       path: '/',
       name: 'home',
       component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
-      meta: { requiresAuth: true },
+      meta: { title: 'Mi perfil', requiresAuth: true },
     },
     {
       path: '/ingreso',
       name: 'ingreso',
       component: () => import(/* webpackChunkName: "ingreso" */ './views/Ingreso.vue'),
+      meta: { title: 'Acceso' },
     },
     {
       path: '/dashboard',
       name: 'dashboard',
       component: () =>
         import(/* webpackChunkName: "dashboard" */ './views/Dashboard/DashBoard.vue'),
-      meta: { requiresAuth: true },
+      meta: { title: 'Dashboard', requiresAuth: true },
     },
     {
       path: '/chat',
       name: 'chat',
       component: () => import(/* webpackChunkName: "chat" */ './views/Chat.vue'),
-      meta: { requiresAuth: true },
+      meta: { title: 'Chat', requiresAuth: true },
     },
     {
       path: '/checklist',
       name: 'checklist',
       component: () => import(/* webpackChunkName: "checklist" */ './views/Tareas/CheckList.vue'),
-      meta: { requiresAuth: true },
+      meta: { title: 'Tareas', requiresAuth: true },
     },
     {
       path: '/agregar',
       name: 'agregar',
       component: () => import(/* webpackChunkName: "agregar" */ './views/Tareas/Agregar.vue'),
-      meta: { requiresAuth: true },
+      meta: { parent: 'checklist', title: 'Nueva tarea', requiresAuth: true },
     },
     {
       path: '/editar/:id',
       name: 'editar',
       component: () => import(/* webpackChunkName: "editar" */ './views/Tareas/Editar.vue'),
-      meta: { requiresAuth: true },
+      meta: { parent: 'checklist', title: 'Editar tarea', requiresAuth: true },
+    },
+    {
+      path: '/proyectos',
+      name: 'proyectos',
+      component: () =>
+        import(/* webpackChunkName: "proyectos" */ './views/Proyectos/Proyectos.vue'),
+      meta: { title: 'Proyectos', requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/proyectos/:slug',
+      name: 'proyecto',
+      component: () => import(/* webpackChunkName: "proyectos" */ './views/Proyectos/Proyecto.vue'),
+      meta: { parent: 'proyectos', title: 'Proyecto', requiresAuth: true, requiresAdmin: true },
     },
     {
       path: '/drive',
       name: 'drive',
       component: () => import(/* webpackChunkName: "drive" */ './views/Drive/Drive.vue'),
-      meta: { requiresAuth: true },
+      meta: { title: 'Documentos', requiresAuth: true },
     },
   ],
 })
@@ -61,10 +77,19 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    token ? next() : next({ name: 'ingreso' })
+    if (!token) return next({ name: 'ingreso' })
+    const usuario = store.state.usuario
+    if (to.matched.some((record) => record.meta.requiresAdmin) && !(usuario && usuario.isAdmin)) {
+      return next({ name: 'home' })
+    }
+    next()
   } else {
     next()
   }
+})
+
+router.afterEach((to) => {
+  document.title = to.meta.title ? `${to.meta.title} · Intranet` : 'Intranet'
 })
 
 export default router

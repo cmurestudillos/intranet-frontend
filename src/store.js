@@ -14,11 +14,15 @@ export default new Vuex.Store({
     tareasCompletadas: [],
     tarea: { nombre: '', horas: 0, prioridad: '', id: '', uid: '' },
     documentos: [],
-    nombre: '',
-    texto: '',
-    selected: '',
     graficoPendientes: [],
     graficoCompletadas: [],
+    // Proyectos del vault de Obsidian (solo admin)
+    proyectos: [],
+    proyectoFiltro: '',
+    // Última actividad recibida del vault; las vistas la observan para refrescar
+    ultimaActividadNotas: null,
+    // Límites de subida del backend (MB); valores por defecto hasta consultarlos
+    limites: { avatarMB: 4, documentoMB: 4, cargados: false },
   },
   mutations: {
     nuevoUsuario(state, payload) {
@@ -52,22 +56,22 @@ export default new Vuex.Store({
     cargarFirebase(state, payload) {
       state.carga = payload
     },
+    setProyectos(state, proyectos) {
+      state.proyectos = proyectos
+    },
+    setProyectoFiltro(state, slug) {
+      state.proyectoFiltro = slug || ''
+    },
+    setLimites(state, limites) {
+      state.limites = { ...limites, cargados: true }
+    },
+    setUltimaActividadNotas(state, actividad) {
+      state.ultimaActividadNotas = actividad
+    },
   },
   actions: {
     setUsuario({ commit }, user) {
       commit('nuevoUsuario', user)
-    },
-    buscador({ state }, payload) {
-      state.texto = payload.toLowerCase()
-    },
-    filtro({ state }, payload) {
-      state.selected = payload.toLowerCase()
-    },
-    componenteInzCarga({ commit }) {
-      commit('cargarFirebase', true)
-    },
-    componenteFinCarga({ commit }) {
-      commit('cargarFirebase', false)
     },
     cerrarSesion({ commit }) {
       localStorage.removeItem('token')
@@ -116,6 +120,7 @@ export default new Vuex.Store({
           nombre: tarea.nombre,
           horas: tarea.horas,
           prioridad: tarea.prioridad,
+          proyecto: tarea.proyecto || '',
         })
         router.push({ name: 'checklist' })
       } catch (error) {
@@ -131,6 +136,7 @@ export default new Vuex.Store({
           nombre: tarea.nombre,
           horas: tarea.horas,
           prioridad: tarea.prioridad,
+          proyecto: tarea.proyecto || '',
         })
         router.push({ name: 'checklist' })
       } catch (error) {
@@ -140,19 +146,27 @@ export default new Vuex.Store({
 
     async eliminarTarea({ commit }, id) {
       const result = await Swal.fire({
-        title: '¿Está seguro de eliminar la tarea?',
+        title: '¿Eliminar esta tarea?',
+        text: 'Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#35d141',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Confirmar',
+        confirmButtonText: 'Eliminar',
         cancelButtonText: 'Cancelar',
+        reverseButtons: true,
+        customClass: { confirmButton: 'btn-confirm-danger' },
       })
       if (result.isConfirmed) {
         try {
           await api.delete(`/tasks/${id}`)
           commit('eliminarTarea', id)
-          Swal.fire('¡Eliminada!', 'La tarea se ha eliminado satisfactoriamente.', 'success')
+          Swal.fire({
+            toast: true,
+            position: 'bottom-end',
+            timer: 3000,
+            showConfirmButton: false,
+            icon: 'success',
+            title: 'Tarea eliminada',
+          })
         } catch (error) {
           console.error('Error al eliminar tarea:', error.message)
         }
@@ -169,8 +183,26 @@ export default new Vuex.Store({
       }
     },
 
-    cancelarAccion() {
-      router.push({ name: 'checklist' })
+    async getLimites({ commit, state }) {
+      if (state.limites.cargados) return
+      try {
+        const { data } = await api.get('/health')
+        if (data.limites) commit('setLimites', data.limites)
+      } catch (error) {
+        console.error('Error al obtener límites:', error.message)
+      }
+    },
+
+    // ── Proyectos (vault de Obsidian) ─────────────────────────────────────── //
+    async getProyectos({ commit, state }, { force = false } = {}) {
+      if (!state.usuario || !state.usuario.isAdmin) return
+      if (state.proyectos.length && !force) return
+      try {
+        const { data } = await api.get('/notes/projects')
+        commit('setProyectos', data.projects)
+      } catch (error) {
+        console.error('Error al obtener proyectos:', error.message)
+      }
     },
 
     // ── Gráficas ──────────────────────────────────────────────────────────── //
@@ -231,19 +263,9 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    arrayFiltrado(state) {
-      if (state.selected === 'imagenes') {
-        return state.documentos.filter((d) => /png|jpg|jpeg|svg\+xml/.test(d.tipo))
-      } else if (state.selected === 'documentos') {
-        return state.documentos.filter((d) => /pdf|json|text|sheet|document/.test(d.tipo))
-      }
-      return state.documentos.filter((d) => d.nombre.toLowerCase().includes(state.texto))
-    },
-    arrayFiltradoPendientes(state) {
-      return state.tareasPendientes.filter((t) => t.nombre.toLowerCase().includes(state.texto))
-    },
-    arrayFiltradoCompletadas(state) {
-      return state.tareasCompletadas.filter((t) => t.nombre.toLowerCase().includes(state.texto))
+    nombreProyecto: (state) => (slug) => {
+      const p = state.proyectos.find((x) => x.slug === slug)
+      return p ? p.nombre : slug
     },
   },
 })
