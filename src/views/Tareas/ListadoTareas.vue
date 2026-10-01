@@ -1,146 +1,142 @@
 <template>
-  <draggable class="list-group mt-4" @start="drag = true" @end="drag = false">
-    <li class="list-group-item" v-for="item of tareas" :key="item.id">
-      <div class="task-left">
-        <i class="fas fa-grip-vertical task-handle"></i>
-        <span :class="{ tachado: item.estado }" class="fonts">
-          <strong>{{ item.nombre }}</strong>
-        </span>
-      </div>
-      <div class="task-right">
-        <span class="task-meta">
-          <small>Horas</small>
-          <strong>{{ item.horas }}h</strong>
-        </span>
-        <span class="task-meta task-prioridad" :class="'prio-' + item.prioridad">
-          <small>Prioridad</small>
-          <strong>{{ item.prioridad }}</strong>
-        </span>
-        <!-- Toggle estado -->
-        <b-button
-          @click="cambiarEstado(item)"
-          :class="item.estado ? 'btn-success' : 'btn-info'"
-          class="btn btn-sm task-btn"
-          :title="item.estado ? 'Completada' : 'Pendiente'"
-        >
-          <i :class="item.estado ? 'fas fa-check' : 'fas fa-clock'"></i>
-        </b-button>
-        <!-- Editar -->
-        <router-link
-          class="btn btn-warning btn-sm task-btn"
-          :to="{ name: 'editar', params: { id: item.id } }"
-          :event="item.estado ? '' : 'click'"
-          :class="{ 'btn-secondary': item.estado }"
-          title="Editar"
-        >
-          <i class="fas fa-pen"></i>
-        </router-link>
-        <!-- Eliminar -->
-        <b-button
-          @click="eliminarTarea(item.id)"
-          class="btn btn-danger btn-sm task-btn"
-          title="Eliminar"
-        >
-          <i class="fas fa-trash"></i>
-        </b-button>
-      </div>
-    </li>
-  </draggable>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-check"><span class="sr-only">Estado</span></th>
+          <th>Tarea</th>
+          <th class="num">Horas</th>
+          <th>Prioridad</th>
+          <th>Creada</th>
+          <th class="col-actions"><span class="sr-only">Acciones</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in tareas" :key="item.id" :class="{ hecha: item.estado }">
+          <td class="col-check">
+            <button
+              class="check"
+              :class="{ on: item.estado }"
+              :title="item.estado ? 'Marcar como pendiente' : 'Marcar como completada'"
+              :aria-label="item.estado ? 'Marcar como pendiente' : 'Marcar como completada'"
+              @click="cambiarEstado(item)"
+            >
+              <i v-if="item.estado" class="fas fa-check"></i>
+            </button>
+          </td>
+          <td class="col-nombre">
+            <span class="nombre">{{ item.nombre }}</span>
+            <router-link
+              v-if="item.proyecto && usuario && usuario.isAdmin"
+              :to="{ name: 'proyecto', params: { slug: item.proyecto } }"
+              class="badge-soft tone-accent proyecto"
+              :title="'Proyecto: ' + nombreProyecto(item.proyecto)"
+            >
+              <i class="fas fa-book"></i> {{ nombreProyecto(item.proyecto) }}
+            </router-link>
+          </td>
+          <td class="num">{{ item.horas }} h</td>
+          <td>
+            <span class="badge-soft" :class="tonoPrioridad[item.prioridad]">{{
+              etiquetaPrioridad[item.prioridad]
+            }}</span>
+          </td>
+          <td class="muted fecha">{{ item.createdAt | moment('D MMM YYYY') }}</td>
+          <td class="col-actions">
+            <router-link
+              v-if="!item.estado"
+              :to="{ name: 'editar', params: { id: item.id } }"
+              class="btn btn-ghost btn-icon"
+              title="Editar"
+              aria-label="Editar"
+            >
+              <i class="fas fa-pen"></i>
+            </router-link>
+            <button
+              class="btn btn-ghost btn-icon danger"
+              title="Eliminar"
+              aria-label="Eliminar"
+              @click="eliminarTarea(item.id)"
+            >
+              <i class="far fa-trash-can"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import draggable from 'vuedraggable'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 export default {
   props: {
-    tareas: { type: Array },
+    tareas: { type: Array, default: () => [] },
   },
-  components: { draggable },
+  data() {
+    return {
+      tonoPrioridad: { alta: 'tone-danger', media: 'tone-warning', relax: 'tone-success' },
+      etiquetaPrioridad: { alta: 'Alta', media: 'Media', relax: 'Baja' },
+    }
+  },
+  computed: {
+    ...mapState(['usuario']),
+    ...mapGetters(['nombreProyecto']),
+  },
   methods: {
     ...mapActions(['eliminarTarea', 'cambiarEstado']),
+  },
+  created() {
+    // Los nombres de proyecto de las insignias salen del store
+    this.$store.dispatch('getProyectos')
   },
 }
 </script>
 
 <style scoped>
-.list-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.col-check {
+  width: 44px;
+  padding-right: 0 !important;
 }
-
-.list-group-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.task-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-.task-handle {
-  color: #475569;
-  cursor: grab;
-  font-size: 0.8rem;
-  flex-shrink: 0;
-}
-
-.task-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.task-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 4px 10px;
-  border-left: 1px solid rgba(99, 102, 241, 0.12);
-  font-family: 'Inter', sans-serif;
-}
-.task-meta small {
-  font-size: 0.65rem;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.task-meta strong {
-  font-size: 0.82rem;
-  color: #e2e8f0;
-}
-
-.task-prioridad.prio-alta strong {
-  color: #f87171;
-}
-.task-prioridad.prio-media strong {
-  color: #fcd34d;
-}
-.task-prioridad.prio-relax strong {
-  color: #86efac;
-}
-
-.task-btn {
-  width: 30px;
-  height: 30px;
+.check {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  display: grid;
+  place-items: center;
   padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  border-radius: 6px !important;
+  cursor: pointer;
+  color: #fff;
+  font-size: 10px;
 }
-
-.toCapitalFirst {
-  text-transform: capitalize;
+.check:hover {
+  border-color: var(--accent);
+}
+.check.on {
+  background: var(--success);
+  border-color: var(--success);
+}
+.col-nombre {
+  min-width: 240px;
+}
+.nombre {
+  font-weight: 500;
+  margin-right: var(--sp-2);
+}
+.hecha .nombre {
+  text-decoration: line-through;
+  color: var(--text-3);
+}
+.proyecto {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+.fecha {
+  white-space: nowrap;
 }
 </style>

@@ -1,9 +1,7 @@
 import Vue from 'vue'
-import './plugins/vuetify'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import api from '@/api'
 
@@ -13,15 +11,14 @@ const moment = require('moment')
 require('moment/locale/es')
 Vue.use(VueMoment, { moment })
 
-// Vue-bootstrap
+// Bootstrap (rejilla, formularios) + componentes de bootstrap-vue
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 
-// Scroll para el Chat
-import VueChatScroll from 'vue-chat-scroll'
-Vue.use(VueChatScroll)
+// Sistema de diseño propio: debe cargarse DESPUÉS de Bootstrap para prevalecer
+import './styles/app.css'
 
 // Validacion para formularios
 import Vuelidate from 'vuelidate'

@@ -1,174 +1,135 @@
 <template>
-  <div class="auth-wrapper">
-    <div class="auth-card">
-      <!-- Header con degradado -->
-      <div class="auth-header" :class="registro ? 'auth-header--register' : 'auth-header--login'">
-        <div class="auth-logo">
-          <i class="fas fa-shield-alt"></i>
-        </div>
-        <h1 class="auth-title">{{ registro ? 'Crear cuenta' : 'Bienvenido' }}</h1>
-        <p class="auth-subtitle">
+  <div class="auth">
+    <aside class="auth-aside">
+      <div class="auth-brand">
+        <span class="brand-mark"><i class="fas fa-building"></i></span>
+        <span>Intranet</span>
+      </div>
+      <div class="auth-claim">
+        <h1>Tu espacio de trabajo, en un solo sitio.</h1>
+        <ul>
+          <li><i class="fas fa-list-check"></i> Tareas con prioridades y seguimiento mensual</li>
+          <li><i class="fas fa-folder-open"></i> Documentos privados, accesibles solo por ti</li>
+          <li><i class="fas fa-comments"></i> Chat del equipo en tiempo real</li>
+        </ul>
+      </div>
+      <p class="auth-foot">© Carlos Mur</p>
+    </aside>
+
+    <main class="auth-main">
+      <form class="auth-form" novalidate @submit.prevent="submit">
+        <h2>{{ registro ? 'Crear cuenta' : 'Iniciar sesión' }}</h2>
+        <p class="auth-sub">
           {{
-            registro
-              ? 'Rellena los campos para registrarte'
-              : 'Introduce tus credenciales para acceder'
+            registro ? 'Completa los datos para registrarte.' : 'Accede con tu email y contraseña.'
           }}
         </p>
-      </div>
 
-      <!-- Formulario -->
-      <div class="auth-body">
-        <!-- Nombre (solo registro) -->
-        <transition name="slide-down">
-          <div v-if="registro" class="auth-field">
-            <label class="auth-label">Nombre</label>
-            <div class="auth-input-wrap">
-              <i class="fas fa-user auth-input-icon"></i>
-              <input
-                v-model.trim="$v.nombre.$model"
-                type="text"
-                class="auth-input"
-                placeholder="Tu nombre completo"
-                autocomplete="name"
-                :class="{ 'auth-input--error': $v.nombre.$dirty && $v.nombre.$error }"
-              />
-            </div>
-            <span class="auth-error" v-if="$v.nombre.$dirty && !$v.nombre.required">
-              El nombre es obligatorio
-            </span>
-            <span class="auth-error" v-if="$v.nombre.$dirty && !$v.nombre.minLength">
-              Mínimo 2 caracteres
-            </span>
-          </div>
-        </transition>
+        <Mensaje v-if="errorMsg" :texto="errorMsg" tipo="error" />
 
-        <!-- Email -->
-        <div class="auth-field">
-          <label class="auth-label">Email</label>
-          <div class="auth-input-wrap">
-            <i class="fas fa-envelope auth-input-icon"></i>
-            <input
-              v-model.trim="$v.email.$model"
-              type="email"
-              class="auth-input"
-              placeholder="correo@ejemplo.com"
-              autocomplete="email"
-              :class="{ 'auth-input--error': $v.email.$dirty && $v.email.$error }"
-            />
-          </div>
-          <span class="auth-error" v-if="$v.email.$dirty && !$v.email.required">
-            El email es obligatorio
-          </span>
-          <span class="auth-error" v-if="$v.email.$dirty && !$v.email.email">
-            Introduce un email válido
-          </span>
+        <div v-if="registro" class="form-group">
+          <label for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            v-model.trim="$v.nombre.$model"
+            type="text"
+            class="form-control"
+            :class="{ 'is-invalid': $v.nombre.$error }"
+            autocomplete="name"
+          />
+          <p v-if="$v.nombre.$dirty && !$v.nombre.required" class="form-error">
+            El nombre es obligatorio
+          </p>
+          <p v-else-if="$v.nombre.$dirty && !$v.nombre.minLength" class="form-error">
+            Mínimo 2 caracteres
+          </p>
         </div>
 
-        <!-- Contraseña -->
-        <div class="auth-field">
-          <label class="auth-label">Contraseña</label>
-          <div class="auth-input-wrap">
-            <i class="fas fa-lock auth-input-icon"></i>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            v-model.trim="$v.email.$model"
+            type="email"
+            class="form-control"
+            :class="{ 'is-invalid': $v.email.$error }"
+            autocomplete="email"
+            placeholder="nombre@empresa.com"
+          />
+          <p v-if="$v.email.$dirty && !$v.email.required" class="form-error">
+            El email es obligatorio
+          </p>
+          <p v-else-if="$v.email.$dirty && !$v.email.email" class="form-error">
+            Introduce un email válido
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="pass-wrap">
             <input
+              id="password"
               v-model="$v.password.$model"
               :type="showPass ? 'text' : 'password'"
-              class="auth-input auth-input--with-toggle"
-              placeholder="Mínimo 6 caracteres"
-              autocomplete="current-password"
-              :class="{ 'auth-input--error': $v.password.$dirty && $v.password.$error }"
+              class="form-control"
+              :class="{ 'is-invalid': $v.password.$error }"
+              :autocomplete="registro ? 'new-password' : 'current-password'"
             />
             <button
               type="button"
-              class="auth-toggle-pass"
+              class="pass-toggle"
+              :aria-label="showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'"
               @click="showPass = !showPass"
-              tabindex="-1"
             >
               <i :class="showPass ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
-          <span class="auth-error" v-if="$v.password.$dirty && !$v.password.required">
+          <p v-if="$v.password.$dirty && !$v.password.required" class="form-error">
             La contraseña es obligatoria
-          </span>
-          <span class="auth-error" v-if="$v.password.$dirty && !$v.password.minLength">
+          </p>
+          <p v-else-if="$v.password.$dirty && !$v.password.minLength" class="form-error">
             Mínimo 6 caracteres
-          </span>
+          </p>
         </div>
 
-        <!-- Confirmar contraseña (solo registro) -->
-        <transition name="slide-down">
-          <div v-if="registro" class="auth-field">
-            <label class="auth-label">Confirmar contraseña</label>
-            <div class="auth-input-wrap">
-              <i class="fas fa-lock auth-input-icon"></i>
-              <input
-                v-model="$v.confirmar.$model"
-                :type="showConfirm ? 'text' : 'password'"
-                class="auth-input auth-input--with-toggle"
-                placeholder="Repite la contraseña"
-                autocomplete="new-password"
-                :class="{ 'auth-input--error': $v.confirmar.$dirty && $v.confirmar.$error }"
-              />
-              <button
-                type="button"
-                class="auth-toggle-pass"
-                @click="showConfirm = !showConfirm"
-                tabindex="-1"
-              >
-                <i :class="showConfirm ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-              </button>
-            </div>
-            <span class="auth-error" v-if="$v.confirmar.$dirty && !$v.confirmar.sameAsPassword">
-              Las contraseñas no coinciden
-            </span>
-          </div>
-        </transition>
+        <div v-if="registro" class="form-group">
+          <label for="confirmar">Confirmar contraseña</label>
+          <input
+            id="confirmar"
+            v-model="$v.confirmar.$model"
+            :type="showPass ? 'text' : 'password'"
+            class="form-control"
+            :class="{ 'is-invalid': $v.confirmar.$error }"
+            autocomplete="new-password"
+          />
+          <p v-if="$v.confirmar.$dirty && !$v.confirmar.sameAsPassword" class="form-error">
+            Las contraseñas no coinciden
+          </p>
+        </div>
 
-        <!-- Error global -->
-        <transition name="fade">
-          <div v-if="errorMsg" class="auth-alert">
-            <i class="fas fa-exclamation-circle"></i>
-            {{ errorMsg }}
-          </div>
-        </transition>
-
-        <!-- Botón submit -->
-        <button
-          class="auth-btn"
-          :class="registro ? 'auth-btn--register' : 'auth-btn--login'"
-          :disabled="loading"
-          @click="submit"
-        >
-          <span v-if="!loading">
-            <i :class="registro ? 'fas fa-user-plus' : 'fas fa-sign-in-alt'"></i>
-            {{ registro ? 'Crear cuenta' : 'Entrar' }}
-          </span>
-          <span v-else class="auth-spinner">
-            <i class="fas fa-circle-notch fa-spin"></i>
-            {{ registro ? 'Creando cuenta...' : 'Entrando...' }}
-          </span>
+        <button type="submit" class="btn btn-primary btn-block" :disabled="loading">
+          <span v-if="loading" class="spinner spinner-light"></span>
+          {{ textoBoton }}
         </button>
 
-        <!-- Toggle login / registro -->
-        <div class="auth-switch">
-          <template v-if="!registro">
-            ¿No tienes cuenta?
-            <button class="auth-switch-btn" @click="switchMode(true)">Regístrate</button>
-          </template>
-          <template v-else>
-            ¿Ya tienes cuenta?
-            <button class="auth-switch-btn" @click="switchMode(false)">Inicia sesión</button>
-          </template>
-        </div>
-      </div>
-    </div>
+        <p class="auth-switch">
+          {{ registro ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?' }}
+          <button type="button" class="link-btn" @click="switchMode(!registro)">
+            {{ registro ? 'Inicia sesión' : 'Regístrate' }}
+          </button>
+        </p>
+      </form>
+    </main>
   </div>
 </template>
 
 <script>
 import { required, minLength, email, sameAs } from 'vuelidate/lib/validators'
 import api from '@/api'
+import Mensaje from '@/components/Mensaje.vue'
 
 export default {
+  components: { Mensaje },
   data() {
     return {
       registro: false,
@@ -177,7 +138,6 @@ export default {
       password: '',
       confirmar: '',
       showPass: false,
-      showConfirm: false,
       loading: false,
       errorMsg: null,
     }
@@ -196,13 +156,18 @@ export default {
     }
     return base
   },
+  computed: {
+    textoBoton() {
+      if (this.loading) return this.registro ? 'Creando cuenta…' : 'Entrando…'
+      return this.registro ? 'Crear cuenta' : 'Entrar'
+    },
+  },
   methods: {
     switchMode(modo) {
       this.registro = modo
       this.errorMsg = null
       this.$v.$reset()
       this.nombre = ''
-      this.email = ''
       this.password = ''
       this.confirmar = ''
     },
@@ -222,9 +187,9 @@ export default {
         const { data } = await api.post(endpoint, payload)
         localStorage.setItem('token', data.token)
         this.$store.commit('nuevoUsuario', data.user)
-        this.$router.push({ name: 'home' })
+        this.$router.push({ name: 'dashboard' })
       } catch (err) {
-        this.errorMsg = err.response?.data?.message || 'Error al conectar con el servidor'
+        this.errorMsg = err.response?.data?.message || 'No se pudo conectar con el servidor'
       } finally {
         this.loading = false
       }
@@ -234,289 +199,152 @@ export default {
 </script>
 
 <style scoped>
-/* ── Wrapper centrado ─────────────────────── */
-.auth-wrapper {
-  min-height: calc(100vh - 64px);
+.auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(320px, 440px) 1fr;
+  background: var(--bg-surface);
+}
+.auth-aside {
+  background: var(--navy-800);
+  color: var(--text-on-dark);
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-8);
+}
+.auth-brand {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-}
-
-/* ── Card ─────────────────────────────────── */
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-  background: rgba(30, 41, 59, 0.9);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 16px;
-  backdrop-filter: blur(20px);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.5),
-    0 0 24px rgba(99, 102, 241, 0.1);
-  overflow: hidden;
-  animation: fadeInUp 0.4s ease both;
-}
-
-/* ── Header ───────────────────────────────── */
-.auth-header {
-  padding: 32px 28px 24px;
-  text-align: center;
-  position: relative;
-}
-.auth-header--login {
-  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%);
-}
-.auth-header--register {
-  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
-}
-
-.auth-logo {
-  width: 52px;
-  height: 52px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 14px;
-  font-size: 1.4rem;
+  gap: var(--sp-3);
+  font-size: var(--fs-md);
+  font-weight: 600;
   color: #fff;
-  backdrop-filter: blur(8px);
 }
-
-.auth-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+}
+.auth-claim {
+  margin: auto 0;
+}
+.auth-claim h1 {
   color: #fff;
-  margin: 0 0 6px;
-  letter-spacing: -0.02em;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: var(--sp-6);
 }
-
-.auth-subtitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.75);
+.auth-claim ul {
+  list-style: none;
+  padding: 0;
   margin: 0;
 }
-
-/* ── Body ─────────────────────────────────── */
-.auth-body {
-  padding: 28px 28px 24px;
+.auth-claim li {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: baseline;
+  font-size: var(--fs-base);
+  color: var(--text-on-dark-2);
+  margin-bottom: var(--sp-3);
 }
-
-/* ── Field ────────────────────────────────── */
-.auth-field {
-  margin-bottom: 18px;
+.auth-claim li i {
+  width: 16px;
+  color: #93b4f5;
 }
-
-.auth-label {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
+.auth-foot {
+  font-size: var(--fs-xs);
+  color: var(--text-on-dark-2);
+  margin: 0;
 }
-
-.auth-input-wrap {
+.auth-main {
+  display: grid;
+  place-items: center;
+  padding: var(--sp-8) var(--sp-4);
+  background: var(--bg-app);
+}
+.auth-form {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: var(--sp-8);
+}
+.auth-form h2 {
+  font-size: var(--fs-lg);
+}
+.auth-sub {
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+  margin: var(--sp-1) 0 var(--sp-6);
+}
+.pass-wrap {
   position: relative;
 }
-
-.auth-input-icon {
+.pass-wrap .form-control {
+  padding-right: 38px;
+}
+.pass-toggle {
   position: absolute;
-  left: 12px;
+  right: 4px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.85rem;
-  color: #475569;
-  pointer-events: none;
-}
-
-.auth-input {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 8px;
-  color: #e2e8f0;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-  outline: none;
-  box-sizing: border-box;
-}
-.auth-input::placeholder {
-  color: #475569;
-}
-.auth-input:focus {
-  border-color: rgba(99, 102, 241, 0.6);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
-  background: rgba(15, 23, 42, 0.8);
-}
-.auth-input--error {
-  border-color: rgba(239, 68, 68, 0.5) !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-}
-.auth-input--with-toggle {
-  padding-right: 40px;
-}
-
-/* Botón mostrar/ocultar contraseña */
-.auth-toggle-pass {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #475569;
+  width: 30px;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  color: var(--text-3);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  padding: 4px;
-  font-size: 0.85rem;
-  transition: color 0.2s ease;
 }
-.auth-toggle-pass:hover {
-  color: #818cf8;
+.pass-toggle:hover {
+  color: var(--text);
 }
-
-/* ── Errores de campo ─────────────────────── */
-.auth-error {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  color: #f87171;
-  margin-top: 5px;
-}
-
-/* ── Alerta de error global ───────────────── */
-.auth-alert {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 8px;
-  padding: 10px 14px;
-  margin-bottom: 18px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.82rem;
-  color: #fca5a5;
-}
-
-/* ── Botón principal ──────────────────────── */
-.auth-btn {
+.btn-block {
   width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  height: 38px;
+  margin-top: var(--sp-2);
 }
-.auth-btn--login {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+.spinner-light {
+  width: 14px;
+  height: 14px;
+  border-color: rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
 }
-.auth-btn--login:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4338ca, #4f46e5);
-  box-shadow: 0 4px 24px rgba(99, 102, 241, 0.5);
-  transform: translateY(-1px);
-}
-.auth-btn--register {
-  background: linear-gradient(135deg, #059669, #10b981);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
-}
-.auth-btn--register:hover:not(:disabled) {
-  background: linear-gradient(135deg, #047857, #059669);
-  box-shadow: 0 4px 24px rgba(16, 185, 129, 0.5);
-  transform: translateY(-1px);
-}
-.auth-btn:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.auth-spinner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ── Switch login/registro ────────────────── */
 .auth-switch {
   text-align: center;
-  margin-top: 20px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.82rem;
-  color: #64748b;
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+  margin: var(--sp-5) 0 0;
 }
-.auth-switch-btn {
+.link-btn {
+  border: 0;
   background: none;
-  border: none;
-  color: #818cf8;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 600;
+  padding: 0;
+  color: var(--accent);
+  font-weight: 500;
   cursor: pointer;
-  padding: 0 4px;
-  transition: color 0.2s ease;
 }
-.auth-switch-btn:hover {
-  color: #a5b4fc;
+.link-btn:hover {
   text-decoration: underline;
 }
 
-/* ── Animaciones ──────────────────────────── */
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.25s ease;
-  overflow: hidden;
-}
-.slide-down-enter,
-.slide-down-leave-to {
-  opacity: 0;
-  max-height: 0;
-  margin-bottom: 0;
-}
-.slide-down-enter-to,
-.slide-down-leave {
-  opacity: 1;
-  max-height: 120px;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+@media (max-width: 860px) {
+  .auth {
+    grid-template-columns: 1fr;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .auth-aside {
+    padding: var(--sp-5) var(--sp-6);
+  }
+  .auth-claim,
+  .auth-foot {
+    display: none;
   }
 }
 </style>
