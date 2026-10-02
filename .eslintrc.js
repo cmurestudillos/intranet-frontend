@@ -34,6 +34,8 @@ module.exports = {
         trailingComma: 'es5',
         tabWidth: 2,
         arrowParens: 'always',
+        // Los archivos pueden tener CRLF (Windows) o LF; no bloquear el build por ello
+        endOfLine: 'auto',
       },
     ],
   },

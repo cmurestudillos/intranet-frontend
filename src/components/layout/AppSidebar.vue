@@ -55,6 +55,16 @@ export default {
       ]
       if (this.usuario && this.usuario.isAdmin) {
         secciones.push({
+          titulo: 'Trabajo',
+          items: [
+            { title: 'Project Manager', icon: 'fas fa-diagram-project', to: { name: 'pm-tareas' } },
+            { title: 'Todoist', icon: 'fas fa-square-check', to: { name: 'todoist' } },
+            { title: 'Horas', icon: 'fas fa-business-time', to: { name: 'horas' } },
+            { title: 'Snippets', icon: 'fas fa-code', to: { name: 'snippets' } },
+            { title: 'Cron', icon: 'fas fa-clock-rotate-left', to: { name: 'cron' } },
+          ],
+        })
+        secciones.push({
           titulo: 'Conocimiento',
           items: [{ title: 'Proyectos', icon: 'fas fa-book', to: { name: 'proyectos' } }],
         })
