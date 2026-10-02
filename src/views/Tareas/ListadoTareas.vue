@@ -99,26 +99,6 @@ export default {
   width: 44px;
   padding-right: 0 !important;
 }
-.check {
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  background: var(--bg-surface);
-  display: grid;
-  place-items: center;
-  padding: 0;
-  cursor: pointer;
-  color: #fff;
-  font-size: 10px;
-}
-.check:hover {
-  border-color: var(--accent);
-}
-.check.on {
-  background: var(--success);
-  border-color: var(--success);
-}
 .col-nombre {
   min-width: 240px;
 }

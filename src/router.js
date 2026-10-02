@@ -66,6 +66,37 @@ const router = new Router({
       meta: { parent: 'proyectos', title: 'Proyecto', requiresAuth: true, requiresAdmin: true },
     },
     {
+      path: '/trabajo/tareas',
+      name: 'pm-tareas',
+      component: () =>
+        import(/* webpackChunkName: "trabajo" */ './views/Trabajo/TareasExternas.vue'),
+      meta: { title: 'Project Manager', requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/trabajo/horas',
+      name: 'horas',
+      component: () => import(/* webpackChunkName: "trabajo" */ './views/Trabajo/Horas.vue'),
+      meta: { title: 'Horas', requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/trabajo/cron',
+      name: 'cron',
+      component: () => import(/* webpackChunkName: "trabajo" */ './views/Trabajo/Cron.vue'),
+      meta: { title: 'Cron', requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/trabajo/todoist',
+      name: 'todoist',
+      component: () => import(/* webpackChunkName: "trabajo" */ './views/Trabajo/Todoist.vue'),
+      meta: { title: 'Todoist', requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/trabajo/snippets',
+      name: 'snippets',
+      component: () => import(/* webpackChunkName: "trabajo" */ './views/Trabajo/Snippets.vue'),
+      meta: { title: 'Snippets', requiresAuth: true, requiresAdmin: true },
+    },
+    {
       path: '/drive',
       name: 'drive',
       component: () => import(/* webpackChunkName: "drive" */ './views/Drive/Drive.vue'),

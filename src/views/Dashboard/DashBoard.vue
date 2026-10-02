@@ -63,6 +63,8 @@
         </ul>
       </AppPanel>
     </div>
+
+    <ResumenTrabajo v-if="usuario && usuario.isAdmin" class="resumen-trabajo" />
   </div>
 </template>
 
@@ -70,6 +72,7 @@
 import { mapState } from 'vuex'
 import moment from 'moment'
 import Linea from './Linea.vue'
+import ResumenTrabajo from './ResumenTrabajo.vue'
 import Loading from '@/components/Loading.vue'
 import PageHeader from '@/components/ui/PageHeader.vue'
 import AppPanel from '@/components/ui/AppPanel.vue'
@@ -80,7 +83,7 @@ const ORDEN_PRIORIDAD = { alta: 0, media: 1, relax: 2 }
 
 export default {
   name: 'DashBoard',
-  components: { Linea, Loading, PageHeader, AppPanel, StatCard, EmptyState },
+  components: { Linea, ResumenTrabajo, Loading, PageHeader, AppPanel, StatCard, EmptyState },
   data() {
     return {
       year: new Date().getFullYear(),
@@ -123,6 +126,9 @@ export default {
 </script>
 
 <style scoped>
+.resumen-trabajo {
+  margin-top: var(--sp-6);
+}
 .proximas {
   list-style: none;
   margin: 0;
