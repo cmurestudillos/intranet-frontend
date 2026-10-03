@@ -97,6 +97,12 @@ const router = new Router({
       meta: { title: 'Snippets', requiresAuth: true, requiresAdmin: true },
     },
     {
+      path: '/trabajo/presupuestos',
+      name: 'presupuestos',
+      component: () => import(/* webpackChunkName: "trabajo" */ './views/Trabajo/Presupuestos.vue'),
+      meta: { title: 'Presupuestos', requiresAuth: true, requiresAdmin: true },
+    },
+    {
       path: '/drive',
       name: 'drive',
       component: () => import(/* webpackChunkName: "drive" */ './views/Drive/Drive.vue'),
