@@ -137,6 +137,8 @@
             <option value="none">Sin auth</option>
             <option value="project-manager">project-manager</option>
             <option value="control-horas">control-horas</option>
+            <option value="todoist-manager">todoist-manager</option>
+            <option value="control-presupuesto">control-presupuesto</option>
           </select>
           <button
             type="submit"

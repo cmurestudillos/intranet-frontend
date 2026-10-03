@@ -60,6 +60,7 @@ export default {
             { title: 'Project Manager', icon: 'fas fa-diagram-project', to: { name: 'pm-tareas' } },
             { title: 'Todoist', icon: 'fas fa-square-check', to: { name: 'todoist' } },
             { title: 'Horas', icon: 'fas fa-business-time', to: { name: 'horas' } },
+            { title: 'Presupuestos', icon: 'fas fa-wallet', to: { name: 'presupuestos' } },
             { title: 'Snippets', icon: 'fas fa-code', to: { name: 'snippets' } },
             { title: 'Cron', icon: 'fas fa-clock-rotate-left', to: { name: 'cron' } },
           ],
