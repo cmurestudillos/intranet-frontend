@@ -139,6 +139,7 @@
             <option value="control-horas">control-horas</option>
             <option value="todoist-manager">todoist-manager</option>
             <option value="control-presupuesto">control-presupuesto</option>
+            <option value="snippets-manager">snippets-manager</option>
           </select>
           <button
             type="submit"
